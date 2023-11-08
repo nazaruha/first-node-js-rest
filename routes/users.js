@@ -1,22 +1,7 @@
 import express from 'express';
-import { v4 as uuidv4 } from 'uuid'; // to crete unique IDs
+import { getUsers, createUser, getUser, deleteUser, updateUser} from "../controllers/usersController.js";
 
 const router = express.Router();
-
-let users = [
-    {
-        "id": "1",
-        "firstName": "Paul",
-        "lastName": "Doe",
-        "age": 23
-    },
-    {
-        "id": "2",
-        "firstName": "Jane",
-        "lastName": "Doe",
-        "age": 18
-    }
-]
 
 // all routes in here are starting with /users (look at the 11row index.js)
 /**
@@ -30,9 +15,7 @@ let users = [
  *       200:
  *         description: Get Users List Successfully.
  */
-router.get("/", (req, res) => {
-    res.send(users);
-})
+router.get("/", getUsers);
 
 /**
  * @swagger
@@ -57,12 +40,7 @@ router.get("/", (req, res) => {
  *       201:
  *         description: user created successfully.
  */
-router.post("/", (req, res) => {
-    const newUser = req.body;
-    console.log(req.body);
-    users.push({ id: uuidv4(), ... newUser });
-    res.send("User Has been created");
-})
+router.post("/", createUser);
 
 /**
  * @swagger
@@ -91,16 +69,7 @@ router.post("/", (req, res) => {
  *       400:
  *         description: User not found by ID.
  */
-router.get("/:id", (req, res) => {
-    const id = req.params.id; // /users/2 => req.params { id: 2 }
-
-    const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
-    if (findUser !== undefined) {
-        res.status(200).send(findUser);
-    } else {
-        res.status(400).json({message: `User by ID: ${id} not found`});
-    }
-})
+router.get("/:id", getUser);
 
 /**
  * @swagger
@@ -122,18 +91,7 @@ router.get("/:id", (req, res) => {
  *       404:
  *         description: User not found by ID.
  */
-router.delete("/:id", (req, res) => {
-    const id = req.params.id;
-    const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
-    console.log(`findUser = ${findUser}`);
-    if (findUser !== undefined) {
-        users = users.filter(x => x.id !== id);
-        res.status(200).send(`User by ID: ${id} has been deleted`);
-    } else {
-        res.status(400).json({message: `User by ID: ${id} not found`});
-    }
-})
-
+router.delete("/:id", deleteUser);
 
 /**
  * @swagger
@@ -165,21 +123,7 @@ router.delete("/:id", (req, res) => {
  *       201:
  *         description: user created successfully.
  */
-router.put("/:id", (req, res) => {
-    const {id} = req.params;
-    const user = users.find(x => x.id === id);
-    const {firstName, lastName, age} = req.body;
-
-    if (user !== undefined) {
-        if (firstName !== undefined && firstName.trim().length > 0) user.firstName = firstName;
-        if (lastName !== undefined && lastName.trim().length > 0) user.lastName = lastName;
-        if (age !== undefined && age > -1) user.age = age;
-
-        res.status(201).send(`User by ID: ${id} has been updated`);
-    } else {
-        res.status(400).send(`User by ID: ${id} not found`);
-    }
-})
+router.put("/:id", updateUser);
 
 /**
  * @swagger
@@ -205,20 +149,6 @@ router.put("/:id", (req, res) => {
  *       400:
  *         description: Error user update
  */
-router.patch("/:id", (req, res) => {
-    const {id} = req.params;
-    const {firstName, lastName, age} = req.body;
-
-    const user = users.find(x => x.id === id);
-    if (user !== undefined) {
-        if (firstName !== undefined && firstName.trim().length > 0) user.firstName = firstName.trim();
-        if (lastName !== undefined && lastName.trim().length > 0) user.lastName = lastName.trim();
-        if (age !== undefined && age > -1) user.age = age;
-
-        res.status(200).send(`User by ID: ${id} has been updated`);
-    } else {
-        res.status(400).send(`User by ID: ${id} not updated`);
-    }
-})
+router.patch("/:id", updateUser);
 
 export default router;

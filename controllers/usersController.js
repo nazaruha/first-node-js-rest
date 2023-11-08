@@ -16,8 +16,14 @@ let users = [
     }
 ]
 
-export const getUsers = (req, res) => {
-    res.send(users);
+export const getUsers = async (req, res) => {
+    // res.send(users);
+    try {
+        const users = await User.find().sort({createdAt: -1}); // sort by descending (from the newest to the oldest)
+        res.status(200).send(users);
+    } catch(err) {
+        res.status(404).send(`Users not found: ${err}`);
+    }
 }
 
 export const getUser = (req, res) => {

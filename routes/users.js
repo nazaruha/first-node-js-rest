@@ -14,6 +14,8 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Get Users List Successfully.
+ *       404:
+ *         description: Users not found
  */
 router.get("/", getUsers);
 

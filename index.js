@@ -28,6 +28,8 @@ const app = express();
 
 // setup swagger
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
+// setup json data converter
+app.use(express.json()); // tells that we gonna use json data in our app
 
 //routes
 app.use('/users', usersRoutes);

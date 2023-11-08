@@ -25,7 +25,6 @@ export const getUsers = async (req, res) => {
         res.status(404).send(`Users not found: ${err}`);
     }
 }
-
 export const getUser = (req, res) => {
     const id = req.params.id; // /users/2 => req.params { id: 2 }
 
@@ -55,7 +54,6 @@ export const createUser = async (req, res) => {
         res.status(500).send("Error User Create: " + err);
     }
 }
-
 export const deleteUser = (req, res) => {
     const id = req.params.id;
     // const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
@@ -75,19 +73,29 @@ export const deleteUser = (req, res) => {
             res.status(404).send(`Error delete user by ID: ${id}: ${err}`);
         })
 }
+export const updateUser = async (req, res) => {
+    // const {id} = req.params;
+    // const user = users.find(x => x.id === id);
+    // const {firstName, lastName, age} = req.body;
+    //
+    // if (user !== undefined) {
+    //     if (firstName !== undefined && firstName.trim().length > 0) user.firstName = firstName;
+    //     if (lastName !== undefined && lastName.trim().length > 0) user.lastName = lastName;
+    //     if (age !== undefined && age > -1) user.age = age;
+    //
+    //     res.status(201).send(`User by ID: ${id} has been updated`);
+    // } else {
+    //     res.status(400).send(`User by ID: ${id} not found`);
+    // }
 
-export const updateUser = (req, res) => {
     const {id} = req.params;
-    const user = users.find(x => x.id === id);
-    const {firstName, lastName, age} = req.body;
-
-    if (user !== undefined) {
-        if (firstName !== undefined && firstName.trim().length > 0) user.firstName = firstName;
-        if (lastName !== undefined && lastName.trim().length > 0) user.lastName = lastName;
-        if (age !== undefined && age > -1) user.age = age;
-
-        res.status(201).send(`User by ID: ${id} has been updated`);
-    } else {
-        res.status(400).send(`User by ID: ${id} not found`);
-    }
+    User.findByIdAndUpdate(id, req.body)
+        .then(result => {
+            User.findById(id)
+                .then(result => res.status(200).send(result))
+                .catch(err => res.status(404).send(`User by ID: ${id} not found: ${err}`));
+        })
+        .catch(err => {
+            res.status(400).send(`Error update user by ID: ${id}: ${err}`);
+        })
 }

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid'; // to crete unique IDs
 
 const router = express.Router();
 
-const users = [
+var users = [
     {
         "id": uuidv4(),
         "firstName": "Paul",
@@ -93,9 +93,41 @@ router.post("/", (req, res) => {
 router.get("/:id", (req, res) => {
     const id = req.params.id; // /users/2 => req.params { id: 2 }
 
-    const findUser = users.find(x => x.id == id); // user contains id (string), firstName (string), lastName (string), age (number)
-    if (findUser !== null) {
+    const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
+    if (findUser !== undefined) {
         res.status(200).send(findUser);
+    } else {
+        res.status(400).json({message: `User by ID: ${id} not found`});
+    }
+})
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   delete:
+ *     summary: Delete a user by ID.
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: the ID of the user to delete.
+ *     responses:
+ *       200:
+ *         description: User deleted successfully
+ *       404:
+ *         description: User not found by ID.
+ */
+router.delete("/:id", (req, res) => {
+    const id = req.params.id;
+    const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
+    console.log(`findUser = ${findUser}`);
+    if (findUser !== undefined) {
+        users = users.filter(x => x.id !== id);
+        res.status(200).send(`User by ID: ${id} has been deleted`);
     } else {
         res.status(400).json({message: `User by ID: ${id} not found`});
     }

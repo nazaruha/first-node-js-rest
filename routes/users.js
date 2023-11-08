@@ -3,15 +3,15 @@ import { v4 as uuidv4 } from 'uuid'; // to crete unique IDs
 
 const router = express.Router();
 
-var users = [
+let users = [
     {
-        "id": uuidv4(),
+        "id": "1",
         "firstName": "Paul",
         "lastName": "Doe",
         "age": 23
     },
     {
-        "id": uuidv4(),
+        "id": "2",
         "firstName": "Jane",
         "lastName": "Doe",
         "age": 18
@@ -59,6 +59,7 @@ router.get("/", (req, res) => {
  */
 router.post("/", (req, res) => {
     const newUser = req.body;
+    console.log(req.body);
     users.push({ id: uuidv4(), ... newUser });
     res.send("User Has been created");
 })
@@ -130,6 +131,93 @@ router.delete("/:id", (req, res) => {
         res.status(200).send(`User by ID: ${id} has been deleted`);
     } else {
         res.status(400).json({message: `User by ID: ${id} not found`});
+    }
+})
+
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   put:
+ *     description: Create a new user.
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: the ID of the user to update
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               age:
+ *                 type: number
+ *     responses:
+ *       201:
+ *         description: user created successfully.
+ */
+router.put("/:id", (req, res) => {
+    const {id} = req.params;
+    const user = users.find(x => x.id === id);
+    const {firstName, lastName, age} = req.body;
+
+    if (user !== undefined) {
+        if (firstName !== undefined && firstName.trim().length > 0) user.firstName = firstName;
+        if (lastName !== undefined && lastName.trim().length > 0) user.lastName = lastName;
+        if (age !== undefined && age > -1) user.age = age;
+
+        res.status(201).send(`User by ID: ${id} has been updated`);
+    } else {
+        res.status(400).send(`User by ID: ${id} not found`);
+    }
+})
+
+/**
+ * @swagger
+ * /users/{id}:
+ *   patch:
+ *     summary: Update user by ID
+ *     description: Use this endpoint to update an existing user
+ *     tags:
+ *       - Users
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: User has been updated
+ *       400:
+ *         description: Error user update
+ */
+router.patch("/:id", (req, res) => {
+    const {id} = req.params;
+    const {firstName, lastName, age} = req.body;
+
+    const user = users.find(x => x.id === id);
+    if (user !== undefined) {
+        if (firstName !== undefined && firstName.trim().length > 0) user.firstName = firstName.trim();
+        if (lastName !== undefined && lastName.trim().length > 0) user.lastName = lastName.trim();
+        if (age !== undefined && age > -1) user.age = age;
+
+        res.status(200).send(`User by ID: ${id} has been updated`);
+    } else {
+        res.status(400).send(`User by ID: ${id} not updated`);
     }
 })
 

@@ -58,14 +58,22 @@ export const createUser = async (req, res) => {
 
 export const deleteUser = (req, res) => {
     const id = req.params.id;
-    const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
-    console.log(`findUser = ${findUser}`);
-    if (findUser !== undefined) {
-        users = users.filter(x => x.id !== id);
-        res.status(200).send(`User by ID: ${id} has been deleted`);
-    } else {
-        res.status(400).json({message: `User by ID: ${id} not found`});
-    }
+    // const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
+    // console.log(`findUser = ${findUser}`);
+    // if (findUser !== undefined) {
+    //     users = users.filter(x => x.id !== id);
+    //     res.status(200).send(`User by ID: ${id} has been deleted`);
+    // } else {
+    //     res.status(400).json({message: `User by ID: ${id} not found`});
+    // }
+
+    User.findByIdAndDelete(id)
+        .then(result => {
+            res.status(200).send(result);
+        })
+        .catch(err => {
+            res.status(404).send(`Error delete user by ID: ${id}: ${err}`);
+        })
 }
 
 export const updateUser = (req, res) => {

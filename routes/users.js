@@ -39,6 +39,8 @@ router.get("/", getUsers);
  *     responses:
  *       201:
  *         description: user created successfully.
+ *       500:
+ *         description: error user create
  */
 router.post("/", createUser);
 

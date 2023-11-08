@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const userSchema = Schema({
+const userSchema = new Schema({
     firstName: {
         type: String,
         required: [true, "Please, enter a user's first name"]

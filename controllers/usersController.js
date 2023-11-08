@@ -1,4 +1,5 @@
 import {v4 as uuidv4} from "uuid"; // to create unique IDs
+import User from "../models/userModel.js";
 
 let users = [
     {
@@ -29,10 +30,17 @@ export const getUser = (req, res) => {
         res.status(400).json({message: `User by ID: ${id} not found`});
     }
 }
-export const createUser = (req, res) => {
-    const newUser = req.body;
-    users.push({ id: uuidv4(), ... newUser });
-    res.send("User Has been created");
+export const createUser = async (req, res) => {
+    // const newUser = req.body;
+    // users.push({ id: uuidv4(), ... newUser });
+    // res.send("User Has been created");
+
+    try {
+        const user = await User.create(req.body);
+        res.status(201).send(user);
+    } catch(err) {
+        res.status(500).send("Error User Create: " + err);
+    }
 }
 
 export const deleteUser = (req, res) => {

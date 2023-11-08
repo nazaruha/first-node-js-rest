@@ -29,12 +29,19 @@ export const getUsers = async (req, res) => {
 export const getUser = (req, res) => {
     const id = req.params.id; // /users/2 => req.params { id: 2 }
 
-    const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
-    if (findUser !== undefined) {
-        res.status(200).send(findUser);
-    } else {
-        res.status(400).json({message: `User by ID: ${id} not found`});
-    }
+    // const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
+    // if (findUser !== undefined) {
+    //     res.status(200).send(findUser);
+    // } else {
+    //     res.status(400).json({message: `User by ID: ${id} not found`});
+    // }
+
+    User.findById(id)
+        .then(result => {
+            res.status(200).send(result);
+        }).catch(err => {
+            res.status(400).send(`User by ID: ${id} not found: ${err}`);
+        })
 }
 export const createUser = async (req, res) => {
     // const newUser = req.body;

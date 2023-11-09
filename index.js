@@ -36,3 +36,7 @@ app.use(express.urlencoded({extended: false})); // for some kind of shit for ins
 
 //routes
 app.use('/users', usersRoutes);
+app.use("/*", (req, res) => {
+    res.status(404).send("Pade not found");
+})
+

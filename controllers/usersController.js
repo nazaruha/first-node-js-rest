@@ -1,5 +1,6 @@
 import {v4 as uuidv4} from "uuid"; // to create unique IDs
 import User from "../models/userModel.js";
+import asyncHandler from "express-async-handler"
 
 let users = [
     {
@@ -22,10 +23,11 @@ export const getUsers = async (req, res) => {
         const users = await User.find().sort({createdAt: -1}); // sort by descending (from the newest to the oldest)
         res.status(200).send(users);
     } catch(err) {
-        res.status(404).send(`Users not found: ${err}`);
+        res.status(404);
+        res.json({message: err.message, status: process.env.NODE_ENV === "development" ? err.stack : null});
     }
 }
-export const getUser = (req, res) => {
+export const getUser = async (req, res) => {
     const id = req.params.id; // /users/2 => req.params { id: 2 }
 
     // const findUser = users.find(x => x.id === id); // user contains id (string), firstName (string), lastName (string), age (number)
@@ -39,7 +41,8 @@ export const getUser = (req, res) => {
         .then(result => {
             res.status(200).send(result);
         }).catch(err => {
-            res.status(400).send(`User by ID: ${id} not found: ${err}`);
+            res.status(400);
+            res.json({message: err.message, status: process.env.NODE_ENV === "development" ? err.stack : null});
         })
 }
 export const createUser = async (req, res) => {
@@ -51,7 +54,8 @@ export const createUser = async (req, res) => {
         const user = await User.create(req.body);
         res.status(201).send(user);
     } catch(err) {
-        res.status(500).send("Error User Create: " + err);
+        res.status(500);
+        res.json({message: err.message, status: process.env.NODE_ENV === "development" ? err.stack : null});
     }
 }
 export const deleteUser = (req, res) => {
@@ -70,7 +74,8 @@ export const deleteUser = (req, res) => {
             res.status(200).send(result);
         })
         .catch(err => {
-            res.status(404).send(`Error delete user by ID: ${id}: ${err}`);
+            res.status(404);
+            res.json({message: err.message, status: process.env.NODE_ENV === "development" ? err.stack : null});
         })
 }
 export const updateUser = async (req, res) => {
@@ -96,6 +101,7 @@ export const updateUser = async (req, res) => {
                 .catch(err => res.status(404).send(`User by ID: ${id} not found: ${err}`));
         })
         .catch(err => {
-            res.status(400).send(`Error update user by ID: ${id}: ${err}`);
+            res.status(400);
+            res.json({message: err.message, status: process.env.NODE_ENV === "development" ? err.stack : null});
         })
 }

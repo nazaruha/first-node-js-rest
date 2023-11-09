@@ -10,6 +10,8 @@ import specs from './swagger.js'; // import swagger specs
 import mongoose from "mongoose";
 // Routes
 import usersRoutes from './routes/users.js'; // include users routes
+//CORS Policy
+import cors from 'cors';
 
 // init express
 const app = express();
@@ -33,6 +35,20 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
 //app.use(express.json()); // tells that we gonna use json data in our app
 app.use(bodyParser.json());
 app.use(express.urlencoded({extended: false})); // for some kind of shit for insomnia
+// CORS
+//app.use(cors()); // allow access to any URL
+
+// var corsOptions = {
+//     origin: `http://localhost:${PORT}`,
+//     optionsSuccessStatus: 200 // some on 204 works
+// }
+// app.use(cors(corsOptions)); // allow access to the specified URL
+
+var corsOptions = {
+    origin: [`http://localhost:${PORT}`, `http://127.0.0.1:${PORT}`],
+    optionsSuccessStatus: 200 // some on 204 works
+}
+app.use(cors(corsOptions)); // allow access to the specified URLs
 
 //routes
 app.use('/users', usersRoutes);

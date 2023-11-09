@@ -1,3 +1,5 @@
+// Dotenv
+import 'dotenv/config'
 // Express
 import express from 'express';
 import bodyParser from 'body-parser';
@@ -14,8 +16,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // connect to mongodb
-const dbURI = "mongodb+srv://fedunnazarii20122001:Qwerty-1@cluster0.5jfcytu.mongodb.net/nodeJS_API_USERS?retryWrites=true&w=majority";
-mongoose.connect(dbURI)
+const MONGO_URL = process.env.MONGO_URL;
+mongoose.connect(MONGO_URL)
     .then((result) => {
         console.log("connected to DB");
         // listen for requests
